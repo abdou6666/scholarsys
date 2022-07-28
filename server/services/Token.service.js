@@ -73,12 +73,11 @@ class Token {
 			updatedUser.tokenVersion++;
 			await updatedUser.save();
 			//TODO : handle error cases
-
+			console.log('revoked refresh token');
 			return true;
 		} catch (err) {
 			console.log(err);
-
-			return false;
+			next(err);
 		}
 	}
 }

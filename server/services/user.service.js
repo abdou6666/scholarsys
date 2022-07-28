@@ -15,18 +15,20 @@ class UserService {
 
 		const hashedPassword = await bcrpyt.hash(newUser.password, 10);
 		newUser.password = hashedPassword;
-
-		const user = await User.create(newUser);
-		if (!user) {
-			throw ErrorResponse.internalError('Error when creating the user');
-		}
 		try {
+			const user = await User.create(newUser);
+			console.log(hashedPassword);
+			if (!user) {
+				throw ErrorResponse.internalError('Error when creating the user');
+			}
+
 			const emailToken = createToken(user, { type: 'email' }); // throw error
 			const body = `<h3> ${user.firstname} </h3> to confirm your account please click this link ${process
 				.env.URL}/confirm/${emailToken}.<h1>This link will expire in 30m.</h1>`;
 
 			await sendEmail(user.email, 'Confirm your account', body);
 		} catch (err) {
+			console.log(err);
 			throw ErrorResponse.internalError('Error when sending confirmation email');
 		}
 

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const ErrorResponse = require('../util/helpers/ErrorResponse');
 const roles = new Map();
 roles.set('admin', 1999);
 roles.set('agent', 987);
@@ -9,13 +10,15 @@ const verifyRole = (...allowedRoles) => {
 	//  * Implementation getting user role  from jwt *
 	return (req, res, next) => {
 		const authorization = req.headers.authorization || req.headers.Authorization;
-		if (!authorization) {
-			throw new Error('not authenticated');
-			// next(err)
-		}
-		const token = authorization.split(' ')[1];
-		const payload = jwt.verify(token, process.env.SECRET_ACCESS_TOKEN);
+
 		try {
+			if (!authorization) {
+				throw ErrorResponse.unauthorized();
+				// next(err)
+			}
+			const token = authorization.split(' ')[1];
+			const payload = jwt.verify(token, process.env.SECRET_ACCESS_TOKEN);
+
 			if (!payload.role) {
 				throw new Error('role is missing');
 			}
@@ -24,7 +27,7 @@ const verifyRole = (...allowedRoles) => {
 				.map((role) => roles.get(role) === payload.role)
 				.find((val) => val === true);
 			if (!result) {
-				throw new Error('not authed');
+				throw ErrorResponse.unauthorized();
 			}
 			next();
 		} catch (err) {

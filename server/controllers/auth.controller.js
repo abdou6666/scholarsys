@@ -1,8 +1,9 @@
 const AuthService = require('../services/auth.service');
 const ErrorResponse = require('../util/helpers/ErrorResponse');
 class AuthController {
-	static login = async (req, res) => {
+	static login = async (req, res, next) => {
 		const { email, password } = req.body;
+		console.log(email);
 		// TODO: validate email password with validator
 		try {
 			const [ accessToken, refreshToken ] = await AuthService.login(email, password);
@@ -10,19 +11,19 @@ class AuthController {
 				httpOnly: true
 				//	secure: true,
 			});
-			res.status(200).json({ accessToken });
+			return res.status(200).json({ accessToken });
 		} catch (err) {
 			console.log(err); //fix next err
 			// res.sendStatus(500);
 			next(err);
 		}
 	};
-	static logout(_, res) {
+	static logout(_, res, next) {
 		res.clearCookie('jid');
 
 		return res.status(200).json({ success: true, message: 'logged out' });
 	}
-	static async confirmAccount(req, res) {
+	static async confirmAccount(req, re, next) {
 		const token = req.params.token;
 		if (!token) {
 			throw ErrorResponse.badRequest('Invalide url');
@@ -33,10 +34,10 @@ class AuthController {
 		} catch (err) {
 			// return res.status(400).json({ message: 'error occured when confirming account' });
 			console.log(err);
-			// next(err);
+			next(err);
 		}
 	}
-	static resetPassword = async (req, res) => {
+	static resetPassword = async (req, res, next) => {
 		const { email } = req.body;
 		try {
 			await AuthService.resetPassword(email);
@@ -48,7 +49,7 @@ class AuthController {
 		}
 	};
 
-	static changePassword = async (req, res) => {
+	static changePassword = async (req, res, next) => {
 		const { password, confirmPassword } = req.body;
 		const token = req.params.token;
 		if (password !== confirmPassword) {
@@ -59,14 +60,14 @@ class AuthController {
 				throw ErrorResponse.badRequest('token missing');
 			}
 			await AuthService.changePassword(token, password);
-			res.status(200).json({ success: true, message: 'password changed' });
+			return res.status(200).json({ success: true, message: 'password changed' });
 
 			//redirect to login
 		} catch (err) {
 			// console.log(err);
 			// res.status(500).json({ error: 'something went wrong when changing your passord' });
 			console.log(err);
-			// next(err);
+			next(err);
 		}
 	};
 }

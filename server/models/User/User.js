@@ -9,14 +9,14 @@ const User = sequlize.define('user', {
 		allowNull: false,
 		autoIncrement: true
 	},
-	firstname: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	lastname: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
+	// firstname: {
+	// 	type: Sequelize.STRING,
+	// 	allowNull: false
+	// },
+	// lastname: {
+	// 	type: Sequelize.STRING,
+	// 	allowNull: false
+	// },
 	email: {
 		type: Sequelize.STRING,
 		allowNull: false,
@@ -26,14 +26,14 @@ const User = sequlize.define('user', {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
-	phoneNumber: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	birthDate: {
-		type: Sequelize.DATEONLY,
-		allowNull: false
-	},
+	// phoneNumber: {
+	// 	type: Sequelize.STRING,
+	// 	allowNull: false
+	// },
+	// birthDate: {
+	// 	type: Sequelize.DATEONLY,
+	// 	allowNull: false
+	// },
 	confirmed: {
 		type: Sequelize.BOOLEAN,
 		defaultValue: false
