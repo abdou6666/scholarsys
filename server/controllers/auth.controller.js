@@ -26,7 +26,6 @@ class AuthController {
 		return res.status(200).json({ success: true, message: 'logged out' });
 	}
 	static async confirmAccount(req, re, next) {
-	static async confirmAccount(req, res, next) {
 		const token = req.params.token;
 		if (!token) {
 			throw ErrorResponse.badRequest('Invalide url');
@@ -37,7 +36,7 @@ class AuthController {
 			// TODO : redirect instead to login page
 		} catch (err) {
 			// return res.status(400).json({ message: 'error occured when confirming account' });
-			console.log(err);
+			// console.log(err);
 			// console.log(err);
 			next(err);
 		}
