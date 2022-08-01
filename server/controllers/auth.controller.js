@@ -4,6 +4,7 @@ class AuthController {
 	static login = async (req, res, next) => {
 		const { email, password } = req.body;
 		console.log(email);
+		// console.log(email);
 		// TODO: validate email password with validator
 		try {
 			const [ accessToken, refreshToken ] = await AuthService.login(email, password);
@@ -14,6 +15,7 @@ class AuthController {
 			return res.status(200).json({ accessToken });
 		} catch (err) {
 			console.log(err); //fix next err
+			//console.log(err); //fix next err
 			// res.sendStatus(500);
 			next(err);
 		}
@@ -24,6 +26,7 @@ class AuthController {
 		return res.status(200).json({ success: true, message: 'logged out' });
 	}
 	static async confirmAccount(req, re, next) {
+	static async confirmAccount(req, res, next) {
 		const token = req.params.token;
 		if (!token) {
 			throw ErrorResponse.badRequest('Invalide url');
@@ -31,9 +34,11 @@ class AuthController {
 		try {
 			await AuthService.confirm(token);
 			return res.status(200).json({ message: 'user confirmed' });
+			// TODO : redirect instead to login page
 		} catch (err) {
 			// return res.status(400).json({ message: 'error occured when confirming account' });
 			console.log(err);
+			// console.log(err);
 			next(err);
 		}
 	}
@@ -54,6 +59,7 @@ class AuthController {
 		const token = req.params.token;
 		if (password !== confirmPassword) {
 			throw ErrorResponse.badRequest('password and confirm password needs to be same');
+			throw ErrorResponse.badRequest('password and confirm password needs to be equal.');
 		}
 		try {
 			if (!token) {
@@ -67,6 +73,7 @@ class AuthController {
 			// console.log(err);
 			// res.status(500).json({ error: 'something went wrong when changing your passord' });
 			console.log(err);
+			// console.log(err);
 			next(err);
 		}
 	};

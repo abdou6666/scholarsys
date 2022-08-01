@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User/User');
+const ErrorResponse = require('../util/helpers/ErrorResponse');
 
 class Token {
 	static createToken(user, options) {
@@ -11,6 +12,7 @@ class Token {
 			[ 'access', 'refresh', 'email' ].indexOf(options.type.toLowerCase()) === -1
 		) {
 			throw new Error('Specify the right token type.');
+			throw new Error('You have to specify the right token type.');
 		}
 		if (options.type === 'access') {
 			secret = process.env.SECRET_ACCESS_TOKEN;
@@ -68,16 +70,24 @@ class Token {
 	}
 
 	static async revokeRefreshTokens(userId) {
+		const updatedUser = await User.findByPk(userId);
+		if (!updatedUser) {
+			throw ErrorResponse.notFound('could not find the user to revoke the token');
+		}
+		updatedUser.tokenVersion++;
 		try {
 			const updatedUser = await User.findByPk(userId);
 			updatedUser.tokenVersion++;
 			await updatedUser.save();
 			//TODO : handle error cases
 			console.log('revoked refresh token');
+			// console.log('revoked refresh token');
 			return true;
 		} catch (err) {
 			console.log(err);
 			next(err);
+			throw ErrorResponse.internalError('could not update token version');
+			// next(err);
 		}
 	}
 }

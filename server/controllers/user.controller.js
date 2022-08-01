@@ -35,6 +35,7 @@ class userController {
 		} catch (err) {
 			// next(err);
 			res.sendStatus(400);
+			next(err);
 		}
 	};
 
@@ -65,6 +66,7 @@ class userController {
 			return res.status(204).json(updatedUser);
 		} catch (err) {
 			console.log(err);
+			// console.log(err);
 			next(err);
 			// res.status(404).json({ error: `user with ${id} not found` });
 		}

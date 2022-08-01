@@ -19,6 +19,7 @@ const sendEmail = async (to, subject, body) => {
 		});
 	} catch (error) {
 		throw ErrorResponse.internalError();
+		throw ErrorResponse.internalError('Error when sending the eamil');
 	}
 };
 

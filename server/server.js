@@ -12,6 +12,12 @@ const errorHandler = require('./middlewares/errorHandler.middleware');
 const isAuthenticated = require('./middlewares/isAuthenticated.middleware');
 const verifyRole = require('./middlewares/isAuthorized.middleware');
 
+const niveauRouter = require('./routes/niveau-routes');
+const classeRouter = require('./routes/classe-routes');
+const formationRouter = require('./routes/formation-routes');
+const chargeRouter = require('./routes/charge-routes');
+const salleRouter = require('./routes/salle-routes');
+
 const PORT = process.env.PORT || 8000;
 
 const app = express();
@@ -25,6 +31,12 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use('/', niveauRouter);
+app.use('/', classeRouter);
+app.use('/', formationRouter);
+app.use('/', chargeRouter);
+app.use('/', salleRouter);
 
 app.use('/user', userRouter);
 app.use(authRouter);
@@ -49,8 +61,6 @@ app.use(errorHandler);
 
 app.listen(PORT, async () => {
 	try {
-		// await sequelize.sync({ force: true });
-		await sequelize.sync();
 	} catch (err) {
 		console.log(err);
 	}

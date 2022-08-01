@@ -20,6 +20,7 @@ class UserService {
 			console.log(hashedPassword);
 			if (!user) {
 				throw ErrorResponse.internalError('Error when creating the user');
+				throw ErrorResponse.internalError('Error while creating the user');
 			}
 
 			const emailToken = createToken(user, { type: 'email' }); // throw error
@@ -29,6 +30,7 @@ class UserService {
 			await sendEmail(user.email, 'Confirm your account', body);
 		} catch (err) {
 			console.log(err);
+			// console.log(err);
 			throw ErrorResponse.internalError('Error when sending confirmation email');
 		}
 
