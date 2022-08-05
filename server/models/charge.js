@@ -23,4 +23,27 @@ const Charge = sequlize.define('charge', {
 	}
 });
 
+// ,
+// 		createdAt: {
+// 			type: 'TIMESTAMP',
+// 			defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+// 			allowNull: false
+// 		},
+// 		updatedAt: {
+// 			type: 'TIMESTAMP',
+// 			defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+// 			allowNull: false
+// 		}
+// 	},
+// 	{
+// 		timestamps: false
+// 	}
+
+//  *** matiere tale
+// Matiere.hasMany(Seance);
+// Seance.belongsTo(Matiere);
+
+// Matiere.hasMany(Note);
+// Note.belongsTo(Matiere);
+
 module.exports = Charge;

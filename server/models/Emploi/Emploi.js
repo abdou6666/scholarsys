@@ -1,10 +1,10 @@
-'use strict';
 const Sequelize = require('sequelize');
-const sequlize = require('../config/db.config');
-const Seance = require('./Seance/Seance');
+const sequilize = require('../../config/db.config');
+const Seance = require('../Seance/Seance');
+const User = require('../User/User');
 
-const Salle = sequlize.define(
-	'salle',
+const Emploi = sequilize.define(
+	'emploi',
 	{
 		id: {
 			primaryKey: true,
@@ -12,7 +12,7 @@ const Salle = sequlize.define(
 			allowNull: false,
 			autoIncrement: true
 		},
-		designation: {
+		name: {
 			type: Sequelize.STRING,
 			allowNull: false,
 			unique: true
@@ -32,7 +32,13 @@ const Salle = sequlize.define(
 		timestamps: false
 	}
 );
-Salle.hasMany(Seance);
-Seance.belongsTo(Salle);
 
-module.exports = Salle;
+Emploi.hasMany(Seance);
+Seance.belongsTo(Emploi);
+
+// table emploi contains agentId created EMPLOI
+// Emploi.belongsTo(User, {
+// 	foreignKey: 'agentId'
+// });
+
+module.exports = Emploi;

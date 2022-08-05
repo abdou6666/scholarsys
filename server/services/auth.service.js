@@ -10,15 +10,18 @@ class AuthService {
 	static async login(email, password) {
 		// TODO : handle this in the router express-validator
 		if (!email || !password) {
-			// return res.status(400).json({ message: 'Email and password are required.' });
 			throw ErrorResponse.badRequest('Email and password are required.');
 		}
-
+		console.log('email ', email);
+		console.log('password :', password);
 		const user = await User.findOne({
 			where: {
 				email
 			}
 		});
+		if (!user) {
+			throw ErrorResponse.notFound();
+		}
 
 		if (!user.confirmed) {
 			throw ErrorResponse.forbidden('Please confirm your account!');

@@ -11,7 +11,6 @@ class Token {
 			!options.type ||
 			[ 'access', 'refresh', 'email' ].indexOf(options.type.toLowerCase()) === -1
 		) {
-			throw new Error('Specify the right token type.');
 			throw new Error('You have to specify the right token type.');
 		}
 		if (options.type === 'access') {

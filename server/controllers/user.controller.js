@@ -3,9 +3,30 @@ const UserService = require('../services/user.service');
 // TODO : ADD Service layer & clean up controller
 
 class userController {
-	static getAll = async (_req, res, next) => {
+	static getAll = async (_, res, next) => {
 		try {
 			return res.status(200).json(await UserService.findAll());
+		} catch (err) {
+			next(err);
+		}
+	};
+	static getTeachers = async (_, res, next) => {
+		try {
+			return res.status(200).json(await UserService.findAll({ teachers: true }));
+		} catch (err) {
+			next(err);
+		}
+	};
+	static getAgents = async (_, res, next) => {
+		try {
+			return res.status(200).json(await UserService.findAll({ agents: true }));
+		} catch (err) {
+			next(err);
+		}
+	};
+	static getStudents = async (_, res, next) => {
+		try {
+			return res.status(200).json(await UserService.findAll({ students: true }));
 		} catch (err) {
 			next(err);
 		}
@@ -13,6 +34,7 @@ class userController {
 
 	static create = async (req, res, next) => {
 		const { firstname, lastname, email, password, phoneNumber, birthDate } = req.body;
+
 		// const newUser = {
 		// 	firstname,
 		// 	lastname,
@@ -23,9 +45,10 @@ class userController {
 		// };
 		const newUser = {
 			email,
-			password
+			password,
+			image: req.files.image
 		};
-		// console.log(newUser);
+
 		try {
 			await UserService.create(newUser);
 
@@ -33,8 +56,8 @@ class userController {
 				.status(201)
 				.json({ message: `${newUser.firstname} created.Please confirm your account.` });
 		} catch (err) {
-			// next(err);
-			res.sendStatus(400);
+			console.log(err);
+
 			next(err);
 		}
 	};

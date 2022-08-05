@@ -5,6 +5,8 @@ const sequelize = require('./config/db.config');
 const Token = require('./services/Token.service');
 const userRouter = require('./routes/userRouter');
 const authRouter = require('./routes/authRouter');
+const seanceRouter = require('./routes/seanceRouter');
+const emploiRouter = require('./routes/emploiRouter');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
@@ -17,6 +19,8 @@ const classeRouter = require('./routes/classe-routes');
 const formationRouter = require('./routes/formation-routes');
 const chargeRouter = require('./routes/charge-routes');
 const salleRouter = require('./routes/salle-routes');
+const matiereRouter = require('./routes/matiere-routes');
+const noteRouter = require('./routes/note-routes');
 
 const PORT = process.env.PORT || 8000;
 
@@ -37,9 +41,13 @@ app.use('/', classeRouter);
 app.use('/', formationRouter);
 app.use('/', chargeRouter);
 app.use('/', salleRouter);
+app.use('/', matiereRouter);
+app.use('/', noteRouter);
 
 app.use('/user', userRouter);
 app.use(authRouter);
+app.use('/seance', seanceRouter);
+app.use('/emploi', emploiRouter);
 
 // test route for isAuthenticated middleware
 app.get('/private', isAuthenticated, (req, res) => {
@@ -61,6 +69,8 @@ app.use(errorHandler);
 
 app.listen(PORT, async () => {
 	try {
+		// await sequelize.sync({ force: true });
+		await sequelize.sync();
 	} catch (err) {
 		console.log(err);
 	}

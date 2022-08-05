@@ -20,7 +20,7 @@ const verifyRole = (...allowedRoles) => {
 			const payload = jwt.verify(token, process.env.SECRET_ACCESS_TOKEN);
 
 			if (!payload.role) {
-				throw new Error('role is missing');
+				throw ErrorResponse.unauthorized();
 			}
 			const rolesArray = [ ...allowedRoles ];
 			const result = rolesArray

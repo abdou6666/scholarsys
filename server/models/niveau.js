@@ -26,22 +26,38 @@ const Sequelize = require('sequelize');
 const sequlize = require('../config/db.config');
 const Classe = require('./classe');
 
-const Niveau = sequlize.define('niveau', {
-	id: {
-		primaryKey: true,
-		type: Sequelize.INTEGER,
-		allowNull: false,
-		autoIncrement: true
+const Niveau = sequlize.define(
+	'niveau',
+	{
+		id: {
+			primaryKey: true,
+			type: Sequelize.INTEGER,
+			allowNull: false,
+			autoIncrement: true
+		},
+		designation: {
+			type: Sequelize.STRING,
+			allowNull: false
+		},
+		acronyme: {
+			type: Sequelize.STRING,
+			allowNull: false
+		}
+		// createdAt: {
+		// 	type: 'TIMESTAMP',
+		// 	defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+		// 	allowNull: false
+		// },
+		// updatedAt: {
+		// 	type: 'TIMESTAMP',
+		// 	defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+		// 	allowNull: false
+		// }
 	},
-	designation: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	acronyme: {
-		type: Sequelize.STRING,
-		allowNull: false
+	{
+		timestamps: false
 	}
-});
+);
 
 Niveau.hasMany(Classe, {
 	foreignKey: 'niveauId'
