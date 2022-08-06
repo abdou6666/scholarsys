@@ -3,6 +3,9 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/db.config');
 const User = require('../User/User');
 
+// i want every seance (time +duration) + teacherId unique for that day in every emploi (check constraint or validate ???)
+// create procedure ???
+// create trigger when agent adds emploi it push old ones into new table history ??
 const Seance = sequelize.define(
 	'seance',
 	{
@@ -14,8 +17,7 @@ const Seance = sequelize.define(
 		},
 		start_hour: {
 			type: Sequelize.INTEGER,
-			allowNull: false,
-			unique: true
+			allowNull: false
 		},
 		start_minute: {
 			type: Sequelize.INTEGER,
@@ -23,8 +25,7 @@ const Seance = sequelize.define(
 		},
 		seance_duration: {
 			type: Sequelize.INTEGER,
-			allowNull: false,
-			unique: true
+			allowNull: false
 		},
 		day: {
 			type: DataTypes.ENUM(
@@ -38,32 +39,20 @@ const Seance = sequelize.define(
 			),
 			allowNull: false
 		}
-		// ,createdAt: {
-		// 	type: DataTypes.DATE,
-		// 	defaultValue: DataTypes.NOW
-		// 	// allowNull: true //check if it adds correctly
-		// },
-		// updatedAt: {
-		// 	type: DataTypes.DATE,
-		// 	defaultValue: DataTypes.NOW
-		// 	// allowNull: true //check if it adds correctly
-		// }
 	},
 	{
-		timestamps: false,
+		timestamps: true,
+		createdAt: true,
+		updatedAt: true,
+
+		// TODO: check constraint instead
 		indexes: [
 			{
 				unique: true,
-				fields: [ 'start_hour', 'seance_duration', 'emploiId' ]
+				fields: [ 'start_hour', 'seance_duration', 'emploiId', 'teacherId' ]
 			}
 		]
 	}
 );
 
-// Seance.belongsTo(User, {
-// 	foreignKey: 'agentId'
-// });
-// Seance.belongsTo(User, {
-// 	foreignKey: 'teacherId'
-// });
 module.exports = Seance;

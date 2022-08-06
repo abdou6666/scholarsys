@@ -7,13 +7,16 @@ const path = require('path');
 const crypto = require('crypto');
 class UserService {
 	static async findAll(option) {
-		if (!option) return await User.findAll({ exclude: [ 'password' ] });
+		if (!option)
+			return await User.findAll({
+				attributes: { exclude: [ 'password' ] }
+			});
 		if (option.teachers) {
 			return await User.findAll({
 				where: {
 					role: 666
 				},
-				exclude: [ 'password' ]
+				attributes: { exclude: [ 'password' ] }
 			});
 		}
 		if (option.students) {
@@ -21,7 +24,7 @@ class UserService {
 				where: {
 					role: 1
 				},
-				exclude: [ 'password' ]
+				attributes: { exclude: [ 'password' ] }
 			});
 		}
 		if (option.agents) {
@@ -29,28 +32,11 @@ class UserService {
 				where: {
 					role: 987
 				},
-				exclude: [ 'password' ]
+				attributes: { exclude: [ 'password' ] }
 			});
 		}
 	}
 
-	// let sampleFile;
-	// let uploadPath;
-
-	// if (!req.files || Object.keys(req.files).length === 0) {
-	// 	return res.status(400).send('No files were uploaded.');
-	// }
-
-	// // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-	// sampleFile = req.files.sampleFile;
-	// uploadPath = __dirname + sampleFile.name;
-
-	// // Use the mv() method to place the file somewhere on your server
-	// sampleFile.mv(uploadPath, function(err) {
-	// 	if (err) return res.status(500).send(err);
-
-	// 	res.send('File uploaded!');
-	// });
 	static async create(newUser) {
 		// TODO : Sanitize data
 
@@ -58,8 +44,8 @@ class UserService {
 			const hashedPassword = await bcrpyt.hash(newUser.password, 10);
 			newUser.password = hashedPassword;
 
+			// TODO:  create function to handle image creation process in utils
 			const random = crypto.randomBytes(20).toString('hex');
-
 			const arrayWithExtensions = newUser.image.name.split('.');
 
 			const ext = arrayWithExtensions[arrayWithExtensions.length - 1];
@@ -69,7 +55,8 @@ class UserService {
 			let sampleFile = newUser.image;
 
 			const newUserData = {
-				email: newUser.email,
+				...newUser,
+				// email: newUser.email,
 				password: hashedPassword,
 				image: newImgName
 				// lastname: newUser.lastname,
@@ -77,6 +64,7 @@ class UserService {
 				// phoneNumber: newUser.phoneNumber,
 				// birhDate: newUser.birhDate
 			};
+			console.log(newUserData);
 
 			const user = await User.create(newUserData);
 
@@ -109,7 +97,9 @@ class UserService {
 	}
 	static async findOne(id) {
 		try {
-			return await User.findByPk(id, { exclude: [ 'password' ] });
+			return await User.findByPk(id, {
+				attributes: { exclude: [ 'password' ] }
+			});
 		} catch (err) {
 			throw ErrorResponse.notFound('could not find the user');
 		}
@@ -117,6 +107,10 @@ class UserService {
 	static async updateOne(id, updatedUser) {
 		// TODO : Sanitize data
 		// TODO: Sanitize data & make sure data is passed or keep old values
+		const hashedPassword = await bcrpyt.hash(updatedUser.password, 10);
+		updatedUser.password = hashedPassword;
+
+		// TODO: add image update
 		try {
 			return await User.update(updatedUser, {
 				where: {

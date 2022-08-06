@@ -78,15 +78,8 @@ class Token {
 			const updatedUser = await User.findByPk(userId);
 			updatedUser.tokenVersion++;
 			await updatedUser.save();
-			//TODO : handle error cases
-			console.log('revoked refresh token');
-			// console.log('revoked refresh token');
-			return true;
 		} catch (err) {
-			console.log(err);
-			next(err);
 			throw ErrorResponse.internalError('could not update token version');
-			// next(err);
 		}
 	}
 }

@@ -61,19 +61,11 @@ const Formation = sequlize.define(
 			type: Sequelize.DATE,
 			allowNull: false
 		}
-		// createdAt: {
-		// 	type: 'TIMESTAMP',
-		// 	defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-		// 	allowNull: false
-		// },
-		// updatedAt: {
-		// 	type: 'TIMESTAMP',
-		// 	defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
-		// 	allowNull: false
-		// }
 	},
 	{
-		timestamps: false
+		timestamps: true,
+		createdAt: true,
+		updatedAt: true
 	}
 );
 

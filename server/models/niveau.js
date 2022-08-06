@@ -43,19 +43,11 @@ const Niveau = sequlize.define(
 			type: Sequelize.STRING,
 			allowNull: false
 		}
-		// createdAt: {
-		// 	type: 'TIMESTAMP',
-		// 	defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-		// 	allowNull: false
-		// },
-		// updatedAt: {
-		// 	type: 'TIMESTAMP',
-		// 	defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
-		// 	allowNull: false
-		// }
 	},
 	{
-		timestamps: false
+		timestamps: true,
+		createdAt: true,
+		updatedAt: true
 	}
 );
 

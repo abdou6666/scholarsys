@@ -12,8 +12,6 @@ class AuthService {
 		if (!email || !password) {
 			throw ErrorResponse.badRequest('Email and password are required.');
 		}
-		console.log('email ', email);
-		console.log('password :', password);
 		const user = await User.findOne({
 			where: {
 				email
@@ -25,7 +23,6 @@ class AuthService {
 
 		if (!user.confirmed) {
 			throw ErrorResponse.forbidden('Please confirm your account!');
-			// return res.status(409).send({ message: 'Please confirm your account!' });
 		}
 		const isValid = await bcrpyt.compare(password, user.password);
 		if (!isValid) {

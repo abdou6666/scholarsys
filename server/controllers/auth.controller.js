@@ -3,7 +3,6 @@ const ErrorResponse = require('../util/helpers/ErrorResponse');
 class AuthController {
 	static login = async (req, res, next) => {
 		const { email, password } = req.body;
-		console.log(email);
 		// console.log(email);
 		// TODO: validate email password with validator
 		try {
@@ -14,9 +13,6 @@ class AuthController {
 			});
 			return res.status(200).json({ accessToken });
 		} catch (err) {
-			console.log(err); //fix next err
-			//console.log(err); //fix next err
-			// res.sendStatus(500);
 			next(err);
 		}
 	};
@@ -58,7 +54,6 @@ class AuthController {
 		const token = req.params.token;
 		if (password !== confirmPassword) {
 			throw ErrorResponse.badRequest('password and confirm password needs to be same');
-			throw ErrorResponse.badRequest('password and confirm password needs to be equal.');
 		}
 		try {
 			if (!token) {
@@ -69,10 +64,6 @@ class AuthController {
 
 			//redirect to login
 		} catch (err) {
-			// console.log(err);
-			// res.status(500).json({ error: 'something went wrong when changing your passord' });
-			console.log(err);
-			// console.log(err);
 			next(err);
 		}
 	};

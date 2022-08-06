@@ -17,19 +17,11 @@ const Salle = sequlize.define(
 			allowNull: false,
 			unique: true
 		}
-		// createdAt: {
-		// 	type: 'TIMESTAMP',
-		// 	defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-		// 	allowNull: false
-		// },
-		// updatedAt: {
-		// 	type: 'TIMESTAMP',
-		// 	defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
-		// 	allowNull: false
-		// }
 	},
 	{
-		timestamps: false
+		timestamps: true,
+		createdAt: true,
+		updatedAt: true
 	}
 );
 Salle.hasMany(Seance);

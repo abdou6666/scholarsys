@@ -14,7 +14,6 @@ const verifyRole = (...allowedRoles) => {
 		try {
 			if (!authorization) {
 				throw ErrorResponse.unauthorized();
-				// next(err)
 			}
 			const token = authorization.split(' ')[1];
 			const payload = jwt.verify(token, process.env.SECRET_ACCESS_TOKEN);

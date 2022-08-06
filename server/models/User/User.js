@@ -56,23 +56,19 @@ const User = sequlize.define(
 			defaultValue: 1,
 			allowNull: false
 		},
-		salaire: {
-			type: Sequelize.DOUBLE,
+		// salaire: {
+		// 	type: Sequelize.DOUBLE,
+		// 	allowNull: true
+		// }
+		specificData: {
+			type: Sequelize.JSON,
 			allowNull: true
-		},
-		createdAt: {
-			type: 'TIMESTAMP',
-			defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-			allowNull: false
-		},
-		updatedAt: {
-			type: 'TIMESTAMP',
-			defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
-			allowNull: false
 		}
 	},
 	{
-		timestamps: false
+		timestamps: true,
+		createdAt: true,
+		updatedAt: true
 	}
 );
 //prof has many seance
@@ -105,13 +101,13 @@ User.hasMany(Seance, {
 	foreignKey: 'agentId'
 });
 
-User.hasOne(Seance, {
+User.belongsToMany(Classe, {
+	through: 'teacher_classes',
 	foreignKey: 'teacherId'
 });
-User.hasMany(Classe, {
-	foreignKey: 'teacherId'
+Classe.belongsToMany(User, {
+	through: 'teacher_classes',
+	foreignKey: 'classeId'
 });
-User.hasOne(Classe, {
-	foreignKey: 'studentId'
-});
+
 module.exports = User;
