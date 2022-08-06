@@ -14,6 +14,7 @@ router.get('/teachers', userController.getTeachers);
 router.get('/students', userController.getStudents);
 router.get('/agents', userController.getAgents);
 router.get('/', userController.getAll);
+
 router.post(
 	'/',
 	userSchema.createUserSchema,

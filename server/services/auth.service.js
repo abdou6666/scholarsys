@@ -38,7 +38,7 @@ class AuthService {
 		const payload = jwt.verify(token, process.env.EMAIL_SECRET);
 
 		if (!payload) {
-			throw ErrorResponse.badRequest('Url missing some data');
+			throw ErrorResponse.badRequest('missing some data');
 		}
 		const user = await User.findByPk(payload.userId);
 		if (!user) {

@@ -3,7 +3,6 @@ const ErrorResponse = require('../util/helpers/ErrorResponse');
 class AuthController {
 	static login = async (req, res, next) => {
 		const { email, password } = req.body;
-		// console.log(email);
 		// TODO: validate email password with validator
 		try {
 			const [ accessToken, refreshToken ] = await AuthService.login(email, password);
@@ -31,9 +30,6 @@ class AuthController {
 			return res.status(200).json({ message: 'user confirmed' });
 			// TODO : redirect instead to login page
 		} catch (err) {
-			// return res.status(400).json({ message: 'error occured when confirming account' });
-			// console.log(err);
-			// console.log(err);
 			next(err);
 		}
 	}
@@ -43,8 +39,6 @@ class AuthController {
 			await AuthService.resetPassword(email);
 			return res.status(200).json({ message: 'email has been sent to reset your password' });
 		} catch (err) {
-			// console.log(err);
-			// return res.status(500).json({ message: 'error occured when resetting your password' });
 			next(err);
 		}
 	};

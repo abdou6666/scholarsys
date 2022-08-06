@@ -3,8 +3,8 @@ const sequlize = require('../../config/db.config');
 const Classe = require('../classe');
 const Emploi = require('../Emploi/Emploi');
 const Seance = require('../Seance/Seance');
-// const joi = require('joi');
 
+//
 const User = sequlize.define(
 	'user',
 	{
@@ -60,6 +60,8 @@ const User = sequlize.define(
 		// 	type: Sequelize.DOUBLE,
 		// 	allowNull: true
 		// }
+		// sopecificData => for teachers => [classesId] that he teaches + salarire
+		// sopecificData => for student => his classeId
 		specificData: {
 			type: Sequelize.JSON,
 			allowNull: true

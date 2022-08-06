@@ -12,5 +12,6 @@ router.get('/confirm/:token', AuthController.confirmAccount);
 
 router.post('/reset_password', AuthController.resetPassword);
 router.post('/reset_password/:token', AuthController.changePassword);
-
+// TODO: new end point for a user can ask for new confirmation account email
+router.post('/send_confirmation_email');
 module.exports = router;
