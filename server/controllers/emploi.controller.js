@@ -1,4 +1,5 @@
 const EmploiService = require('../services/emploi.service');
+
 class EmploiController {
 	static getAll = async (_, res, next) => {
 		try {
@@ -59,6 +60,16 @@ class EmploiController {
 			next(err);
 		}
 	};
+	static async generateEmploi(req, res, next) {
+		try {
+			console.time('timer started : ');
+			await EmploiService.generateEmploi();
+			console.timeEnd('timer started : ');
+			return res.status(200).json({ success: true, message: `Emploi generated` });
+		} catch (err) {
+			next(err);
+		}
+	}
 }
 
 module.exports = EmploiController;

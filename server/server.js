@@ -21,6 +21,7 @@ const chargeRouter = require('./routes/charge-routes');
 const salleRouter = require('./routes/salle-routes');
 const matiereRouter = require('./routes/matiere-routes');
 const noteRouter = require('./routes/note-routes');
+const path = require('path');
 
 const PORT = process.env.PORT || 8000;
 
@@ -35,6 +36,12 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use('/static', express.static(path.join(__dirname, 'public')));
+
+app.use(authRouter);
+app.use('/user', userRouter);
+app.use('/seance', seanceRouter);
+app.use('/emploi', emploiRouter);
 
 app.use('/', niveauRouter);
 app.use('/', classeRouter);
@@ -43,11 +50,6 @@ app.use('/', chargeRouter);
 app.use('/', salleRouter);
 app.use('/', matiereRouter);
 app.use('/', noteRouter);
-
-app.use('/user', userRouter);
-app.use(authRouter);
-app.use('/seance', seanceRouter);
-app.use('/emploi', emploiRouter);
 
 // test route for isAuthenticated middleware
 app.get('/private', isAuthenticated, (req, res) => {
@@ -67,6 +69,16 @@ app.get('/test', isAuthenticated, verifyRole('teacher', 'student'), (req, res) =
 
 app.use(errorHandler);
 
+app.get('/proc', async (req, res, next) => {
+	try {
+		// testing fn
+		const p = await sequelize.query('CALL test();');
+
+		return res.json(p);
+	} catch (error) {
+		console.log(error);
+	}
+});
 app.listen(PORT, async () => {
 	try {
 		// await sequelize.sync({ force: true });

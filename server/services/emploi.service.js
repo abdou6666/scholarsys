@@ -1,5 +1,6 @@
 const Emploi = require('../models/Emploi/Emploi');
 const ErrorResponse = require('../util/helpers/ErrorResponse');
+const createEmplois = require('../util/helpers/PDF.helpers');
 class EmploiService {
 	static findAll = async () => {
 		return await Emploi.findAll();
@@ -45,6 +46,9 @@ class EmploiService {
 		} catch (err) {
 			throw ErrorResponse.internalError('Could not delete this time table');
 		}
+	};
+	static generateEmploi = async () => {
+		createEmplois();
 	};
 }
 module.exports = EmploiService;

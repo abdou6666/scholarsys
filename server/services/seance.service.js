@@ -1,7 +1,8 @@
 const Seance = require('../models/Seance/Seance');
 const ErrorResponse = require('../util/helpers/ErrorResponse');
 class SeanceService {
-	static findAll = async () => {
+	static findAll = async (id) => {
+		if (id) return await Seance.findAll({ where: { emploiId: id } });
 		return await Seance.findAll();
 	};
 	static create = async (seance) => {

@@ -44,14 +44,26 @@ const Seance = sequelize.define(
 		timestamps: true,
 		createdAt: true,
 		updatedAt: true,
-
+		hooks: {
+			beforeCreate: async (record, options) => {
+				// console.table({ record });
+				// console.table({ options });
+				const p = await sequelize.query('CALL test();');
+			}
+			// beforeUpdate: (record, options) => {
+			// 	record.dataValues.updatedAt = new Date()
+			// 		.toISOString()
+			// 		.replace(/T/, ' ')
+			// 		.replace(/\..+/g, '');
+			// }
+		}
 		// TODO: check constraint instead
-		indexes: [
+		/*indexes: [
 			{
 				unique: true,
 				fields: [ 'start_hour', 'seance_duration', 'emploiId', 'teacherId' ]
 			}
-		]
+		] */
 	}
 );
 

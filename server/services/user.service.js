@@ -5,6 +5,12 @@ const sendEmail = require('./email.service');
 const { createToken } = require('./Token.service');
 const path = require('path');
 const crypto = require('crypto');
+const { Console } = require('console');
+const ROLES = {
+	ADMIN: 1999,
+	TEACHER: 666,
+	STUDENT: 1
+};
 class UserService {
 	static async findAll(option) {
 		if (!option)
@@ -56,20 +62,25 @@ class UserService {
 
 			const newUserData = {
 				...newUser,
-				// email: newUser.email,
 				password: hashedPassword,
 				image: newImgName
-				// lastname: newUser.lastname,
-				// firstname: newUser.firstname,
-				// phoneNumber: newUser.phoneNumber,
-				// birhDate: newUser.birhDate
 			};
-			console.log(newUserData);
+			if (newUserData.role === 666) {
+				const specificData = { classesId: [], salary: newUserData.salary };
+
+				newUserData.specificData = JSON.stringify(specificData);
+			}
 
 			const user = await User.create(newUserData);
 
 			sampleFile.name = newImgName;
-			const uploadPath = path.join(__dirname, '..', 'public', 'user_images', sampleFile.name);
+			const uploadPath = path.join(
+				__dirname,
+				'..',
+				'public',
+				'users_images',
+				sampleFile.name
+			);
 			sampleFile.mv(uploadPath, function(err) {
 				if (err) ErrorResponse.internalError('error while uploading the file');
 			});
@@ -85,21 +96,16 @@ class UserService {
 
 			await sendEmail(user.email, 'Confirm your account', body);
 		} catch (err) {
-			// console.log(err);
-			console.log(err);
 			throw ErrorResponse.internalError('Error when sending confirmation email');
 		}
-
-		// res.status(201).json({ message: `${user.firstname} created. confirm your email` });
-		// } catch (err) {
-		// 	res.status(400).json({ error: `Bad data.` });
-		// }
 	}
 	static async findOne(id) {
 		try {
-			return await User.findByPk(id, {
+			const user = await User.findByPk(id, {
 				attributes: { exclude: [ 'password' ] }
 			});
+			user.image = `${process.env.URL}/static/users_images/${user.image}`;
+			return user;
 		} catch (err) {
 			throw ErrorResponse.notFound('could not find the user');
 		}
@@ -110,7 +116,7 @@ class UserService {
 		const hashedPassword = await bcrpyt.hash(updatedUser.password, 10);
 		updatedUser.password = hashedPassword;
 
-		// TODO: add image update
+		// TODO: handle image update
 		try {
 			return await User.update(updatedUser, {
 				where: {
@@ -130,6 +136,54 @@ class UserService {
 			});
 		} catch (err) {
 			throw ErrorResponse.internalError('Could not delete this user');
+		}
+	}
+	static async addClassToUser(id, classeId) {
+		const user = await User.findByPk(id);
+		if (user.role === ROLES.STUDENT) {
+			const newSpeceficData = JSON.stringify({ classeId });
+			console.log(newSpeceficData);
+			user.specificData = newSpeceficData;
+			await user.save();
+		}
+
+		if (user.role === ROLES.TEACHER) {
+			const classes = await JSON.parse(user.specificData);
+			const exist = classes.classesId.find((existingId) => existingId === classeId);
+			if (exist) {
+				throw ErrorResponse.badRequest('this teacher alraedy have this classe');
+			}
+			classes.classesId.push(classeId);
+			const parsed = JSON.stringify(classes);
+			user.specificData = parsed;
+			await user.save();
+		}
+	}
+
+	static async removeClassToUser(id, classeId) {
+		const user = await User.findByPk(id);
+		if (user.role === ROLES.STUDENT) {
+			// const specificData = JSON.parse(user.specificData);
+			// const keys = Object.keys(specificData);
+			// const newClasseId = keys.find((k) => specificData[k] === classeId);
+			user.specificData = null;
+			await user.save();
+		}
+		if (user.role === ROLES.TEACHER) {
+			const classes = await JSON.parse(user.specificData);
+			if (classes.classesId.length === 0) {
+				throw ErrorResponse.badRequest('this teacher does not have any classes');
+			}
+			const newClassesId = classes.classesId.filter((classId) => classeId !== classId);
+
+			const newSpecificData = {
+				...JSON.parse(user.specificData),
+				classesId: [ ...newClassesId ]
+			};
+
+			user.specificData = JSON.stringify(newSpecificData);
+
+			await user.save();
 		}
 	}
 }

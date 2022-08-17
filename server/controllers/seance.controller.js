@@ -1,4 +1,11 @@
 const SeanceService = require('../services/seance.service');
+const ErrorResponse = require('../util/helpers/ErrorResponse');
+const {
+	between,
+	convertTime,
+	calculateSeanceTime,
+	verifyTime
+} = require('../util/helpers/helpers.util');
 class SeanceController {
 	static getAll = async (_, res, next) => {
 		try {
@@ -33,14 +40,35 @@ class SeanceController {
 		};
 
 		try {
+			// TODO: move to service
+			const seances = await SeanceService.findAll(emploiId);
+			const input = {
+				startHour: parseInt(startHour),
+				startMinute: parseInt(startMinute)
+			};
+
+			const inputTime = calculateSeanceTime(input, seanceDuration);
+			const convertedInput = convertTime(inputTime);
+			seances.forEach((seance) => {
+				const time = {
+					startHour: parseInt(seance.start_hour),
+					startMinute: parseInt(seance.start_minute)
+				};
+
+				const seanceTime = calculateSeanceTime(time, seance.seance_duration);
+				const convertedSeanceTime = convertTime(seanceTime);
+				if (!verifyTime(convertedInput, convertedSeanceTime) && seance.day === day) {
+					throw ErrorResponse.badRequest('This time is already taken by another seance.');
+				}
+			});
+
 			await SeanceService.create(newSeance);
 
 			return res.status(201).json({
 				success: true,
-				message: ` Seance has been created.`
+				message: `Seance has been created.`
 			});
 		} catch (err) {
-			console.log(err);
 			next(err);
 		}
 	};
@@ -69,6 +97,28 @@ class SeanceController {
 		};
 		const id = req.params.id;
 		try {
+			// TODO: move to service
+			const seances = await SeanceService.findAll(emploiId);
+			const input = {
+				startHour: parseInt(startHour),
+				startMinute: parseInt(startMinute)
+			};
+
+			const inputTime = calculateSeanceTime(input, seanceDuration);
+			const convertedInput = convertTime(inputTime);
+			seances.forEach((seance) => {
+				const time = {
+					startHour: parseInt(seance.start_hour),
+					startMinute: parseInt(seance.start_minute)
+				};
+
+				const seanceTime = calculateSeanceTime(time, seance.seance_duration);
+				const convertedSeanceTime = convertTime(seanceTime);
+				if (!verifyTime(convertedInput, convertedSeanceTime) && seance.day === day) {
+					throw ErrorResponse.badRequest('This time is already taken by another seance.');
+				}
+			});
+
 			updatedSeance = SeanceService.updateOne(id, updatedSeance);
 			return res
 				.status(204)
@@ -81,7 +131,7 @@ class SeanceController {
 	static getOne = async (req, res, next) => {
 		const id = req.params.id;
 		try {
-			const seance = await SeanceService.findOne(id);
+			const seance = await SeanceService.getOne(id);
 			return res.status(200).json(seance);
 		} catch (err) {
 			next(err);

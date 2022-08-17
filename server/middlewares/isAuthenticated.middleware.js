@@ -12,10 +12,10 @@ const isAuthenticated = (req, res, next) => {
 			throw ErrorResponse.unauthorized();
 		}
 		req.role = payload.role; //for the req.role based authorization
-		// req.userId = payload.userId;
+		req.userId = payload.userId;
 		next();
 	} catch (err) {
-		console.log(err);
+		// console.log(err);
 		next(err);
 	}
 };
