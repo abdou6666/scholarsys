@@ -2,6 +2,8 @@ const Sequelize = require('sequelize');
 const sequlize = require('../../config/db.config');
 const Classe = require('../classe');
 const Emploi = require('../Emploi/Emploi');
+const Matiere = require('../matiere');
+const Note = require('../note');
 const Seance = require('../Seance/Seance');
 
 //
@@ -37,6 +39,7 @@ const User = sequlize.define(
 		},
 		phoneNumber: {
 			type: Sequelize.STRING,
+			unique: true,
 			allowNull: false
 		},
 		birthDate: {
@@ -112,4 +115,25 @@ Classe.belongsToMany(User, {
 	foreignKey: 'classeId'
 });
 
+User.hasMany(Matiere, {
+	foreignKey: 'teacherId'
+});
+
+Matiere.belongsTo(User, {
+	foreignKey: 'teacherId'
+});
+
+User.hasMany(Note, {
+	foreignKey: 'teacherId'
+});
+Note.belongsTo(User, {
+	foreignKey: 'teacherId'
+});
+
+User.hasMany(Note, {
+	foreignKey: 'studentId'
+});
+Note.belongsTo(User, {
+	foreignKey: 'studentId'
+});
 module.exports = User;

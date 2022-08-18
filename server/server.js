@@ -1,12 +1,16 @@
 require('dotenv').config();
 const express = require('express');
+const cluster = require('cluster');
+const { cpus } = require('os');
 
 const sequelize = require('./config/db.config');
+
 const Token = require('./services/Token.service');
 const userRouter = require('./routes/userRouter');
 const authRouter = require('./routes/authRouter');
 const seanceRouter = require('./routes/seanceRouter');
 const emploiRouter = require('./routes/emploiRouter');
+const attendanceRouter = require('./routes/attendanceRouter');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
@@ -42,6 +46,7 @@ app.use(authRouter);
 app.use('/user', userRouter);
 app.use('/seance', seanceRouter);
 app.use('/emploi', emploiRouter);
+app.use('/attendance', attendanceRouter);
 
 app.use('/', niveauRouter);
 app.use('/', classeRouter);
@@ -79,14 +84,27 @@ app.get('/proc', async (req, res, next) => {
 		console.log(error);
 	}
 });
-app.listen(PORT, async () => {
-	try {
-		// await sequelize.sync({ force: true });
-		await sequelize.sync();
-	} catch (err) {
-		console.log(err);
-	}
-	console.log(`Listening on ${PORT}`);
-});
 
+if (cluster.isMaster) {
+	const cpuCount = cpus().length;
+
+	for (let i = 0; i < cpuCount; i++) {
+		console.log(process.pid);
+		cluster.fork();
+	}
+
+	cluster.on('exit', () => {
+		cluster.fork();
+	});
+} else {
+	app.listen(PORT, async () => {
+		try {
+			await sequelize.sync({ force: true });
+			// await sequelize.sync();
+		} catch (err) {
+			console.log(err);
+		}
+		console.log(`Listening on ${PORT} | ${process.pid}`);
+	});
+}
 module.exports = app;

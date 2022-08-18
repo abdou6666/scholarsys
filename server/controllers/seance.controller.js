@@ -1,11 +1,6 @@
 const SeanceService = require('../services/seance.service');
 const ErrorResponse = require('../util/helpers/ErrorResponse');
-const {
-	between,
-	convertTime,
-	calculateSeanceTime,
-	verifyTime
-} = require('../util/helpers/helpers.util');
+const { convertTime, calculateSeanceTime, verifyTime } = require('../util/helpers/helpers.util');
 class SeanceController {
 	static getAll = async (_, res, next) => {
 		try {
@@ -106,6 +101,7 @@ class SeanceController {
 
 			const inputTime = calculateSeanceTime(input, seanceDuration);
 			const convertedInput = convertTime(inputTime);
+
 			seances.forEach((seance) => {
 				const time = {
 					startHour: parseInt(seance.start_hour),

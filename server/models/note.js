@@ -18,6 +18,14 @@ const Note = sequlize.define(
 		date_passage_examen: {
 			type: Sequelize.DATE,
 			allowNull: false
+		},
+		note_val: {
+			type: Sequelize.DOUBLE,
+			allowNull: false
+		},
+		coef_Note: {
+			type: Sequelize.DOUBLE,
+			allowNull: false
 		}
 	},
 	{

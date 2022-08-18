@@ -1,9 +1,8 @@
 'use strict';
 const Sequelize = require('sequelize');
 const sequlize = require('../config/db.config');
-
 const Note = require('./note');
-const Seance = require('./Seance/Seance');
+
 const Matiere = sequlize.define(
 	'matiere',
 	{
@@ -35,6 +34,4 @@ const Matiere = sequlize.define(
 Matiere.hasMany(Note);
 Note.belongsTo(Matiere);
 
-Matiere.hasMany(Seance);
-Seance.belongsTo(Matiere);
 module.exports = Matiere;

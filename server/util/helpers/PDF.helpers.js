@@ -6,6 +6,7 @@ const puppeteer = require('puppeteer');
 const ejs = require('ejs');
 const { Op } = require('sequelize');
 const User = require('../../models/User/User');
+const { convertTime, calculateSeanceTime } = require('./helpers.util');
 const folderName = {
 	teachers: 'teachers',
 	students: 'students'
@@ -46,17 +47,17 @@ const generatePDF = async (obj, name, folderName) => {
 };
 
 async function createEmplois() {
-	// students emplois
 	const classesId = await Classe.findAll();
 
 	const preparedQueries = classesId.map((classe) => {
 		return `select m.designation                            as                  matiere,
-		       concat(s.start_hour, 'h:', s.start_minute) as                  startTime,
-		       concat(s.start_hour + s.seance_duration *0.01, 'h:', s.start_minute) finishTime,
-		       s2.designation                           as                  salle,
-		       e.name                                   as                  'title',
-		       s.day,
-			   e.name
+      			start_minute,
+	   			seance_duration,
+	  			start_hour,
+		        s2.designation                           as                  salle,
+		        e.name                                   as                  'title',
+		        s.day,
+			    e.name
 		from emplois e
 		         join seances s on e.id = s.emploiId
 		         join salles s2 on s.salleId = s2.id
@@ -78,6 +79,27 @@ async function createEmplois() {
 			samedi: []
 		};
 		seances.forEach((s) => {
+			const input = {
+				startHour: parseInt(s.start_hour),
+				startMinute: parseInt(s.start_minute)
+			};
+
+			const inputTime = calculateSeanceTime(input, s.seance_duration);
+			const convertedInput = convertTime(inputTime);
+
+			let convertedStartTime = convertedInput.startTime.toString().replace('.', 'h:');
+			let convertedEndTime = convertedInput.endTime.toString().replace('.', 'h:');
+
+			if (convertedStartTime.length === 5) {
+				convertedStartTime += '0';
+			}
+
+			if (convertedEndTime.length === 5) {
+				convertedEndTime += '0';
+			}
+			s.startTime = convertedStartTime;
+			s.finishTime = convertedEndTime;
+
 			if (s.day === 'lundi') obj.lundi.push(s);
 			if (s.day === 'mardi') obj.mardi.push(s);
 			if (s.day === 'mercredi') obj.mercredi.push(s);
@@ -104,8 +126,9 @@ async function createEmplois() {
 
 	const preparedQueriesTeachers = teachersId.map((id) => {
 		return `select m.designation                            as                  matiere,
-       concat(s.start_hour, 'h:', start_minute) as                  startTime,
-       concat(s.start_hour + s.seance_duration, 'h:', start_minute) finishTime,
+       start_minute,
+	   seance_duration,
+	   start_hour,
        s2.designation                           as                  salle,
        u.firstname,
        s.day,
@@ -119,15 +142,12 @@ from emplois e
 
 where s.teacherId = ${id}`;
 	});
-	console.log(preparedQueriesTeachers);
 
 	try {
 		preparedQueriesTeachers.forEach(async (query) => {
+			let emploiName;
 			const [ seances ] = await sequelize.query(query);
-
-			const emploiName = `teacher_${Date.now()}`;
 			const obj = {
-				emploiName,
 				lundi: [],
 				mardi: [],
 				mercredi: [],
@@ -135,8 +155,29 @@ where s.teacherId = ${id}`;
 				vendredi: [],
 				samedi: []
 			};
-			seances.forEach((s, index) => {
-				if (index === 0) obj.name = s.name;
+			seances.forEach((s) => {
+				const input = {
+					startHour: parseInt(s.start_hour),
+					startMinute: parseInt(s.start_minute)
+				};
+
+				const inputTime = calculateSeanceTime(input, s.seance_duration);
+				const convertedInput = convertTime(inputTime);
+
+				let convertedStartTime = convertedInput.startTime.toString().replace('.', 'h:');
+				let convertedEndTime = convertedInput.endTime.toString().replace('.', 'h:');
+
+				if (convertedStartTime.length === 5) {
+					convertedStartTime += '0';
+				}
+
+				if (convertedEndTime.length === 5) {
+					convertedEndTime += '0';
+				}
+				s.startTime = convertedStartTime;
+				s.finishTime = convertedEndTime;
+
+				emploiName = s.name;
 				if (s.day === 'lundi') obj.lundi.push(s);
 				if (s.day === 'mardi') obj.mardi.push(s);
 				if (s.day === 'mercredi') obj.mercredi.push(s);
@@ -144,11 +185,10 @@ where s.teacherId = ${id}`;
 				if (s.day === 'vendredi') obj.vendredi.push(s);
 				if (s.day === 'samedi') obj.samedi.push(s);
 			});
-
-			generatePDF(obj, obj.name, folderName.teachers);
+			generatePDF(obj, emploiName, folderName.teachers);
 		});
 	} catch (error) {
-		console.log(error);
+		throw ErrorResponse.internalError(error.message);
 	}
 }
 

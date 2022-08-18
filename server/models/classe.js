@@ -1,25 +1,6 @@
-// module.exports = (sequelize, DataType) => {
-// 	const classe = sequelize.define('classe', {
-// 		nom: {
-// 			type: DataType.STRING,
-// 			allowNull: false
-// 		},
-// 		designation: {
-// 			type: DataType.STRING,
-// 			allowNull: false
-// 		}
-// 	});
-// 	classe.associate = (models) => {
-// 		classe.belongsTo(models.niveau);
-// 	};
-// 	return classe;
-// };
-
 ('use strict');
 const Sequelize = require('sequelize');
 const sequlize = require('../config/db.config');
-const Emploi = require('./Emploi/Emploi');
-const User = require('./User/User');
 // const Niveau = require('./niveau');
 
 const Classe = sequlize.define(
@@ -46,8 +27,6 @@ const Classe = sequlize.define(
 		updatedAt: true
 	}
 );
-
-Classe.hasMany(Emploi); // or one
-Emploi.belongsTo(Classe);
+// Classe.belongsTo(Niveau);
 
 module.exports = Classe;

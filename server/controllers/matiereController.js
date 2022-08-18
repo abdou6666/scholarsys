@@ -15,7 +15,8 @@ const modifier = (req, res, next) => {
 		{
 			designation: req.body.designation,
             coef:req.body.coef,
-			nbr_heure: req.body.nbr_heure
+			nbr_heure: req.body.nbr_heure,
+			niveauId:req.body.niveauId
 		},
 		{ where: { id: req.params.id } }
 	)
