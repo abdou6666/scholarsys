@@ -136,4 +136,8 @@ User.hasMany(Note, {
 Note.belongsTo(User, {
 	foreignKey: 'studentId'
 });
+
+Matiere.hasMany(Seance);
+Seance.belongsTo(Matiere);
+
 module.exports = User;
