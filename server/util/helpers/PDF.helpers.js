@@ -57,7 +57,7 @@ async function createEmplois() {
 		        s2.designation                           as                  salle,
 		        e.name                                   as                  'title',
 		        s.day,
-			    e.name
+			    e.name as name
 		from emplois e
 		         join seances s on e.id = s.emploiId
 		         join salles s2 on s.salleId = s2.id
@@ -68,6 +68,9 @@ async function createEmplois() {
 
 	preparedQueries.forEach(async (query) => {
 		const [ seances ] = await sequelize.query(query);
+		if (seances.length === 0) {
+			throw ErrorResponse.internalError('data missing for a class');
+		}
 		const emploiName = seances[0].name.trim().replace(' ', '_');
 		const obj = {
 			emploiName,
@@ -126,23 +129,22 @@ async function createEmplois() {
 
 	const preparedQueriesTeachers = teachersId.map((id) => {
 		return `select m.designation                            as                  matiere,
-       start_minute,
-	   seance_duration,
-	   start_hour,
-       s2.designation                           as                  salle,
-       u.firstname,
-       s.day,
-       concat('emploi_',u.firstname,'_',u.lastname) as name
+	       start_minute,
+		   seance_duration,
+		   start_hour,
+	       s2.designation                           as                  salle,
+	       u.firstname,
+	       s.day,
+	       concat('emploi_',u.firstname,'_',u.lastname) as name
 
-from emplois e
-         join seances s on e.id = s.emploiId
-         join users u on s.teacherId = u.id
-         join salles s2 on s.salleId = s2.id
-         join matieres m on s.matiereId = m.id
+	from emplois e
+	         join seances s on e.id = s.emploiId
+	         join users u on s.teacherId = u.id
+	         join salles s2 on s.salleId = s2.id
+	         join matieres m on s.matiereId = m.id
 
-where s.teacherId = ${id}`;
+	where s.teacherId = ${id}`;
 	});
-
 	try {
 		preparedQueriesTeachers.forEach(async (query) => {
 			let emploiName;

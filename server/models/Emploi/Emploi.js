@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const sequilize = require('../../config/db.config');
+const Classe = require('../classe');
 const Seance = require('../Seance/Seance');
 const User = require('../User/User');
 
@@ -27,5 +28,8 @@ const Emploi = sequilize.define(
 
 Emploi.hasMany(Seance);
 Seance.belongsTo(Emploi);
+
+Classe.hasMany(Emploi);
+Emploi.belongsTo(Classe);
 
 module.exports = Emploi;

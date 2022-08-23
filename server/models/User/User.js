@@ -39,7 +39,7 @@ const User = sequlize.define(
 		},
 		phoneNumber: {
 			type: Sequelize.STRING,
-			unique: true,
+			// unique: true,
 			allowNull: false
 		},
 		birthDate: {

@@ -1,9 +1,6 @@
 const ErrorResponse = require('../util/helpers/ErrorResponse');
 const nodemailer = require('nodemailer');
 const sendEmail = async (to, subject, body) => {
-	console.log(to);
-	console.log(subject);
-	console.log(body);
 	let transporter = nodemailer.createTransport({
 		service: 'Hotmail',
 		auth: {

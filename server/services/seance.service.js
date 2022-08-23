@@ -41,6 +41,28 @@ class SeanceService {
 			throw ErrorResponse.internalError('Could not delete this seance');
 		}
 	};
+	static getSeancesByEmploiId = async (id) => {
+		try {
+			return await Seance.findAll({
+				where: {
+					emploiId: id
+				}
+			});
+		} catch (error) {
+			throw ErrorResponse.internalError();
+		}
+	};
+	static getSeancesByTeacherId = async (id) => {
+		try {
+			return await Seance.findAll({
+				where: {
+					teacherId: id
+				}
+			});
+		} catch (error) {
+			throw ErrorResponse.internalError();
+		}
+	};
 }
 
 module.exports = SeanceService;
