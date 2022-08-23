@@ -39,6 +39,8 @@ router.get('/:id', userController.getOne);
 
 router.patch('/:id', userController.update);
 
+router.patch('/teacher/:id', userController.updateSalary);
+
 router.patch('/addClass/:id', userController.addClassToUser);
 router.patch('/removeClass/:id', userController.removeClassToUser);
 

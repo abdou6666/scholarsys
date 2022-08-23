@@ -5,7 +5,7 @@ const sendEmail = require('./email.service');
 const { createToken } = require('./Token.service');
 const path = require('path');
 const crypto = require('crypto');
-const { Console } = require('console');
+const { unlink } = require('fs');
 const ROLES = {
 	ADMIN: 1999,
 	TEACHER: 666,
@@ -111,21 +111,43 @@ class UserService {
 		}
 	}
 	static async updateOne(id, updatedUser) {
-		// TODO : Sanitize data
-		// TODO: Sanitize data & make sure data is passed or keep old values
 		const hashedPassword = await bcrpyt.hash(updatedUser.password, 10);
 		updatedUser.password = hashedPassword;
 
-		// TODO: handle image update
-		try {
-			return await User.update(updatedUser, {
-				where: {
-					id
+		if (updatedUser.image) {
+			const user = await User.findByPk(id);
+			const p = path.join(__dirname, '..', 'public', 'users_images', user.image);
+			unlink(p, (err) => {
+				if (err) {
+					console.log(err);
 				}
 			});
-		} catch (err) {
-			throw ErrorResponse.internalError('Could not update this user');
+			const random = crypto.randomBytes(20).toString('hex');
+			const arrayWithExtensions = updatedUser.image.name.split('.');
+
+			const ext = arrayWithExtensions[arrayWithExtensions.length - 1];
+
+			let newImgName = `IMG_${random}.${ext}`;
+
+			let sampleFile = updatedUser.image;
+
+			updatedUser.image = newImgName;
+
+			sampleFile.name = newImgName;
+
+			sampleFile.mv(
+				path.join(__dirname, '..', 'public', 'users_images', sampleFile.name),
+				function(err) {
+					if (err) ErrorResponse.internalError('error while uploading the file');
+				}
+			);
 		}
+
+		return await User.update(updatedUser, {
+			where: {
+				id
+			}
+		});
 	}
 	static async deleteOne(id) {
 		try {
@@ -185,6 +207,14 @@ class UserService {
 
 			await user.save();
 		}
+	}
+	static async updateSalary(id, salary) {
+		const user = await User.findByPk(id);
+		const data = JSON.parse(user.specificData);
+		data.salary = salary;
+		user.specificData = JSON.stringify(data);
+		console.log(user.specificData);
+		await user.save();
 	}
 }
 

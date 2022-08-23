@@ -60,11 +60,18 @@ class EmploiController {
 			next(err);
 		}
 	};
-	static async generateEmploi(req, res, next) {
+	static async generateEmploisStudent(req, res, next) {
 		try {
-			console.time('timer started : ');
-			await EmploiService.generateEmploi();
-			console.timeEnd('timer started : ');
+			await EmploiService.generateEmploisStudent();
+			return res.status(200).json({ success: true, message: `Emploi generated` });
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	static async generateEmploisTeachers(req, res, next) {
+		try {
+			await EmploiService.generateEmploisTeachers();
 			return res.status(200).json({ success: true, message: `Emploi generated` });
 		} catch (err) {
 			next(err);

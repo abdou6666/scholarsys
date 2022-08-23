@@ -81,7 +81,7 @@ class userController {
 	};
 
 	static update = async (req, res, next) => {
-		const { firstname, lastname, email, password, phoneNumber, birthDate } = req.body;
+		const { firstname, lastname, email, password, phoneNumber, birthDate, salary } = req.body;
 		let updatedUser = {
 			firstname,
 			lastname,
@@ -90,13 +90,18 @@ class userController {
 			phoneNumber,
 			birthDate
 		};
+		if (salary) {
+			updatedUser.salary = salary;
+		}
+		if (req.files.image) {
+			updatedUser.image = req.files.image;
+		}
 
 		const id = req.params.id;
 		try {
 			updatedUser = UserService.updateOne(id, updatedUser);
 			return res.status(204).json({ success: true, updatedUser });
 		} catch (err) {
-			// console.log(err);
 			next(err);
 		}
 	};
@@ -126,6 +131,16 @@ class userController {
 		try {
 			await UserService.removeClassToUser(id, classeId);
 			return res.status(200).json({ success: true, message: `user removed from class` });
+		} catch (error) {
+			next(error);
+		}
+	};
+	static updateSalary = async (req, res, next) => {
+		const id = req.params.id;
+		const { salary } = req.body;
+		try {
+			await UserService.updateSalary(id, salary);
+			return res.status(200).json({ success: true, message: `teacher salary updated` });
 		} catch (error) {
 			next(error);
 		}
