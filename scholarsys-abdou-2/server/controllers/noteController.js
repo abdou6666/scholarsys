@@ -349,8 +349,21 @@ const BstatMoy = async (req, res, next) => {
 		return await MoyenneParam_sup10(result.studentId);
 	});
 	const data = await await Promise.all(arryObj);
+	const newArray = data.map(element => {
 
-	return res.status(200).json(JSON.stringify(data));
+		if(element.length === 0)
+		return
+		return element
+		
+		});
+
+		let i = 0;
+        newArray.forEach(el => {
+          if(el !== undefined)
+            i++;
+});
+
+	return res.status(200).json(JSON.stringify({moyenneSup:i}));
 }
 const MstatMoy = async (req, res, next) => {
 	const statMoy = await Note.findAll({
@@ -364,9 +377,26 @@ const MstatMoy = async (req, res, next) => {
 		return await MoyenneParam_inf10(result.studentId);
 	});
 	const data = await await Promise.all(arryObj);
+	//console.log(data)
+	const newArray = data.map(element => {
+
+		if(element.length === 0)
+		return
+		return element
+		
+		});
+
+		let i = 0;
+        newArray.forEach(el => {
+          if(el !== undefined)
+            i++;
+});
 	
+		
+		
 	
-	return res.status(200).json(JSON.stringify (data));
+	return res.status(200).json(JSON.stringify ({moyenneInf:i}));
+	
 }
 
 module.exports = {
