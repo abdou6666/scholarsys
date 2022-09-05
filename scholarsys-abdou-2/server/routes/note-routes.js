@@ -10,6 +10,9 @@ route.delete('/note/:id',noteController.supprimer);
 route.get('/moyenne', noteController.Moyenne) ;
 route.get('/moyennes', noteController.MoyenneParam) ;
 route.get('/statMoy', noteController.statMoy) ;
+//route.get('/bonneMoy', noteController.bonneMoy) ;
+route.get('/bonneMoy', noteController.BstatMoy) ;
+route.get('/mauvaiseMoy', noteController.MstatMoy) ;
 
 
 module.exports=route
