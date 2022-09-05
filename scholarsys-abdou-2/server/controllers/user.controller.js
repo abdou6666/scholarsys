@@ -1,4 +1,6 @@
 const UserService = require('../services/user.service');
+const User = require('../models/User/User');
+const { Op } = require("sequelize");
 // TODO : handle cases when find might return empty array or not obj
 // TODO : ADD Service layer & clean up controller
 
@@ -130,6 +132,41 @@ class userController {
 			next(error);
 		}
 	};
+	static StudentCount = async (req, res, next) => {
+		//console.log('test');
+		const studentC = await  User.count({where :{role:1}});
+		console.log(studentC);
+		if (! studentC){
+			res.status(500).json({success:false})
+	
+		}
+		
+		res.status(200).json(studentC) 
+	}
+	static TeacherCount = async (req, res, next) => {
+		console.log('test');
+		const teachertC = await  User.count({where :{role:{[Op.eq]: 666}}});
+		//console.log(studentC);
+		if (! teachertC){
+			res.status(500).json({success:false})
+	
+		}
+		
+		res.status(200).json(teachertC) 
+	}
+	static AgentCount = async (req, res, next) => {
+		console.log('test');
+		const agentC = await  User.count({where :{role:{[Op.eq]: 987}}});
+		//console.log(studentC);
+		if (! agentC){
+			res.status(500).json({success:false})
+	
+		}
+		
+		res.status(200).json(agentC) 
+	}
+
+
 }
 
 module.exports = userController;

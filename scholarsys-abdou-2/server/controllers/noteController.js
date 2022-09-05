@@ -231,8 +231,8 @@ const MoyenneParam_sup10 = async (studentId) => {
 				// arr = [...arr,{studentId,moyenne}]
 				// console.log("nested arr in  ",arr)
 			});
-
-			return t;
+             return t 
+			//return length (t);
 			//   console.log("ttttttttttttttttt " ,t)
 			//   arr = t;
 			//   return t;
@@ -364,8 +364,9 @@ const MstatMoy = async (req, res, next) => {
 		return await MoyenneParam_inf10(result.studentId);
 	});
 	const data = await await Promise.all(arryObj);
-
-	return res.status(200).json(JSON.stringify(data));
+	
+	
+	return res.status(200).json(JSON.stringify (data));
 }
 
 module.exports = {

@@ -10,6 +10,10 @@ const User = require('../models/User/User');
 // const errorHandler = require('../../middleware/error/errorHandler.middleware');
 
 // TODO : role middleware
+router.get('/countTeacher', userController.TeacherCount);
+router.get('/countStudent', userController.StudentCount);
+router.get('/countAgent', userController.AgentCount);
+
 
 router.use(fileUpload());
 
@@ -17,6 +21,8 @@ router.get('/test', async (req, res, next) => {
 	const u = await User.findByPk(1);
 	console.log(await u.getEmplois());
 });
+
+
 
 router.get('/teachers', userController.getTeachers);
 router.get('/students', userController.getStudents);
@@ -43,5 +49,6 @@ router.patch('/addClass/:id', userController.addClassToUser);
 router.patch('/removeClass/:id', userController.removeClassToUser);
 
 router.delete('/:id', userController.delete);
+
 
 module.exports = router;
